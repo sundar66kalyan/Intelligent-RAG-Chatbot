@@ -1,0 +1,12 @@
+"Test ID,Module,Test Case,Expected Result,Actual Result,Status",
+,
+"TC001,Upload,Upload New PDF,PDF Indexed Successfully,,Pending",Pass
+"TC002,Upload,Upload Duplicate PDF,Duplicate Detected,,Pending",Pass
+"TC003,Chatbot,Ask Question From PDF,Correct Answer Returned,,Pending",Pass
+"TC004,Chatbot,Ask Unknown Question,""I could not find the answer..."",,Pending",Pass
+"TC005,Knowledge Base,Preview PDF,Preview Displayed,,Pending",Pass
+"TC006,Knowledge Base,Search PDF,Matching PDF Displayed,,Pending",Pass
+"TC007,Knowledge Base,Delete PDF,PDF Removed,,Pending",Pass
+"TC008,Knowledge Base,Re-index PDF,Chunks Updated,,Pending",Pass
+"TC009,Statistics,Statistics Updated,Counts Correct,,Pending",Pass
+"TC010,Retriever,Source Documents Displayed,Correct Sources,,Pending",Pass
