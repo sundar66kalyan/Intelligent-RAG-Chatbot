@@ -553,9 +553,11 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # ✅ GOOD: Only rebuild when button is clicked
     if st.button("🔄 Rebuild Knowledge Base", use_container_width=True):
-        rebuild_vector_database()
-        st.success("Knowledge Base rebuilt successfully!")
+        with st.spinner("🔄 Rebuilding Knowledge Base..."):
+            rebuild_vector_database()
+        st.success("✅ Knowledge Base rebuilt successfully!")
         st.rerun()
 
     st.markdown("---")
@@ -582,7 +584,13 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    uploaded_files = st.file_uploader("", type=["pdf"], accept_multiple_files=True, label_visibility="collapsed")
+    # ✅ FIXED: Added label text to satisfy Streamlit's accessibility requirement
+    uploaded_files = st.file_uploader(
+        "Upload PDF Files",  # ✅ Label is hidden but satisfies accessibility
+        type=["pdf"],
+        accept_multiple_files=True,
+        label_visibility="collapsed"
+    )
 
     if uploaded_files:
         with st.spinner("🚀 Building Knowledge Base..."):
@@ -592,13 +600,13 @@ with st.sidebar:
                 st.warning(str(e))
                 st.stop()
 
-        st.success("Knowledge Base Updated Successfully!")
+        st.success("✅ Knowledge Base Updated Successfully!")
 
         for item in indexed:
             st.success(f"✅ {item['file']} ({item['chunks']} chunks indexed)")
 
         if skipped:
-            st.warning(f"{len(skipped)} duplicate PDF(s) skipped.")
+            st.warning(f"⚠️ {len(skipped)} duplicate PDF(s) skipped.")
             for file in skipped:
                 st.write("⚠", file)
 
