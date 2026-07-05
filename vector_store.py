@@ -6,6 +6,7 @@ Create and load Chroma Vector Database
 
 import shutil
 import os
+import streamlit as st
 from langchain_chroma import Chroma
 
 from embeddings import get_embedding_model
@@ -19,24 +20,25 @@ from document_loader import (
 
 from metadata_manager import list_documents
 
+
 # ----------------------------------------
-# Load Existing Database
+# Load Existing Database (Cached)
 # ----------------------------------------
 
+@st.cache_resource
 def load_vector_store():
     """
     Load the Chroma vector database if it exists.
     Returns None if the database directory doesn't exist.
+    Streamlit caches it across reruns.
     """
 
     if not os.path.exists(config.VECTOR_DB_DIR):
         return None
 
-    embedding_model = get_embedding_model()
-
     return Chroma(
         persist_directory=config.VECTOR_DB_DIR,
-        embedding_function=embedding_model
+        embedding_function=get_embedding_model()
     )
 
 
@@ -49,11 +51,9 @@ def create_vector_store():
     Create ChromaDB from metadata.
     """
 
-    embedding_model = get_embedding_model()
-
     db = Chroma(
         persist_directory=config.VECTOR_DB_DIR,
-        embedding_function=embedding_model
+        embedding_function=get_embedding_model()
     )
 
     documents = list_documents()
@@ -103,11 +103,9 @@ def update_vector_store():
 
     chunks = split_documents(docs)
 
-    embedding_model = get_embedding_model()
-
     vector_db = Chroma(
         persist_directory=config.VECTOR_DB_DIR,
-        embedding_function=embedding_model
+        embedding_function=get_embedding_model()
     )
 
     vector_db.add_documents(chunks)
@@ -137,11 +135,9 @@ def add_pdf_to_vector_db(pdf_path, document_id):
     for chunk in chunks:
         chunk.metadata["document_id"] = document_id
 
-    embedding_model = get_embedding_model()
-
     db = Chroma(
         persist_directory=config.VECTOR_DB_DIR,
-        embedding_function=embedding_model
+        embedding_function=get_embedding_model()
     )
 
     db.add_documents(chunks)
@@ -181,6 +177,9 @@ def rebuild_vector_database():
     os.makedirs(config.VECTOR_DB_DIR, exist_ok=True)
 
     create_vector_store()
+
+    # Clear the cached vector store so it reloads with new data
+    st.cache_resource.clear()
 
     print("Knowledge Base Rebuilt Successfully")
 

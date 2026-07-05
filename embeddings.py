@@ -3,14 +3,17 @@ embeddings.py
 Loads the embedding model for the RAG pipeline.
 """
 
+import streamlit as st
 import time
 from langchain_huggingface import HuggingFaceEmbeddings
 import config
 
 
+@st.cache_resource
 def get_embedding_model():
     """
     Load and return the embedding model.
+    Streamlit caches it across reruns to avoid reloading.
     """
 
     print("=" * 60)
