@@ -17,23 +17,18 @@ from vector_store import get_retriever
 
 
 # ----------------------------------------
-# Load Retriever
-# ----------------------------------------
-
-retriever = get_retriever(config.TOP_K)
-
-# ----------------------------------------
 # Prompt
 # ----------------------------------------
 
 prompt = get_prompt()
+
 
 # ----------------------------------------
 # Helper
 # ----------------------------------------
 
 def format_docs(docs):
-
+    """Format retrieved documents into a single context string."""
     return "\n\n".join(doc.page_content for doc in docs)
 
 
@@ -60,8 +55,16 @@ def ask(question):
     """
     Process a question through the RAG pipeline with error handling.
     The LLM is created on-demand to catch API key errors at runtime.
+    The retriever is fetched fresh each time to avoid stale cache.
     """
     try:
+        # ✅ FIX 4: Get a fresh retriever every time
+        retriever = get_retriever(config.TOP_K)
+        
+        # ✅ FIX 4: Check if retriever exists
+        if retriever is None:
+            return "📝 Knowledge base is empty. Please upload some PDF documents first."
+        
         # Get retriever context
         docs = retriever.invoke(question)
         context = format_docs(docs)
@@ -105,9 +108,7 @@ def ask(question):
 if __name__ == "__main__":
 
     print("=" * 60)
-
     print("RAG PIPELINE READY")
-
     print("=" * 60)
 
     while True:
@@ -115,11 +116,9 @@ if __name__ == "__main__":
         q = input("\nQuestion : ")
 
         if q.lower() == "exit":
-
             break
 
         answer = ask(q)
 
         print()
-
         print(answer)

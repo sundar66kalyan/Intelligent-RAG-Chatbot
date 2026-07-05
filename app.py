@@ -777,10 +777,18 @@ if question is not None:
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
 
-    # Source documents
+    # --------------------------------------------
+    # ✅ FIX 5: Source Documents - Check retriever exists
+    # --------------------------------------------
+    
     retriever = get_retriever()
 
-    if retriever is not None:
+    if retriever is None:
+        # ✅ Show warning if knowledge base is empty
+        with st.expander("📚 Source Documents"):
+            st.warning("📝 Knowledge base is empty. Please upload some PDF documents first.")
+    else:
+        # ✅ Only invoke if retriever exists
         docs = retriever.invoke(question)
 
         with st.expander("📚 Source Documents"):
@@ -791,9 +799,6 @@ if question is not None:
                 st.write("**Content Preview:**")
                 st.write(doc.page_content[:400])
                 st.markdown("---")
-    else:
-        with st.expander("📚 Source Documents"):
-            st.info("📝 No documents have been indexed yet. Upload some PDFs to get started.")
 
 # -------------------------------------------------
 # Footer with Creator Credit

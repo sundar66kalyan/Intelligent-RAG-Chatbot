@@ -38,17 +38,15 @@ def get_vector_store():
 
 
 # ----------------------------------------
-# Load Existing Database (Cached)
+# Load Existing Database
 # ----------------------------------------
 
-@st.cache_resource
 def load_vector_store():
     """
-    Load the Chroma vector database if it exists.
+    Load the cached Chroma vector database.
     Returns None if the database directory doesn't exist.
-    Streamlit caches it across reruns.
     """
-
+    
     if not os.path.exists(config.VECTOR_DB_DIR):
         return None
 
@@ -62,20 +60,16 @@ def load_vector_store():
 def create_vector_store():
     """
     Create ChromaDB from metadata.
-    If the database already exists, load it instead of rebuilding.
+    Indexes all documents from metadata into the vector store.
     """
 
-    # ✅ Step 4: Don't rebuild Chroma if it already exists
-    if os.path.exists(config.VECTOR_DB_DIR):
-        print("📂 Vector database already exists. Loading existing database...")
-        return get_vector_store()
-
+    # ✅ FIX 1: Remove the early return - always index documents
     db = get_vector_store()
 
     documents = list_documents()
 
     if len(documents) == 0:
-        print("⚠️ No documents found in metadata.")
+        print("⚠️ No metadata found. Vector store will be empty.")
         return db
 
     total_chunks = 0
@@ -88,7 +82,7 @@ def create_vector_store():
         )
 
         if not os.path.exists(pdf_path):
-            print(f"Missing PDF: {pdf_path}")
+            print(f"⚠️ Missing PDF: {pdf_path}")
             continue
 
         docs = load_single_pdf(pdf_path)
@@ -229,6 +223,10 @@ def rebuild_vector_database():
 
     print("🔄 Rebuilding Knowledge Base...")
 
+    # ✅ FIX 2: Clear cache BEFORE deleting database
+    st.cache_resource.clear()
+    print("🧹 Cleared Streamlit cache before rebuild.")
+
     if os.path.exists(config.VECTOR_DB_DIR):
         shutil.rmtree(config.VECTOR_DB_DIR)
         print("🗑️ Removed old vector database.")
@@ -238,9 +236,9 @@ def rebuild_vector_database():
 
     create_vector_store()
 
-    # ✅ Clear the cached vector store so it reloads with new data
+    # ✅ FIX 2: Clear cache AGAIN so a new Chroma object is created
     st.cache_resource.clear()
-    print("🧹 Cleared Streamlit cache.")
+    print("🧹 Cleared Streamlit cache after rebuild.")
 
     print("✅ Knowledge Base Rebuilt Successfully")
 
