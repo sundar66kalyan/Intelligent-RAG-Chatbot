@@ -253,19 +253,43 @@ st.markdown("""
         box-shadow: 0 8px 30px rgba(129, 140, 248, 0.5) !important;
     }
     
-    /* Chat messages with better contrast */
+    /* Chat messages with better contrast - FIXED FOR READABILITY */
     .stChatMessage {
-        background: rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
         border-radius: 16px !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
         backdrop-filter: blur(10px) !important;
         animation: slideIn 0.6s ease-out;
-        padding: 12px !important;
-        color: rgba(255, 255, 255, 0.95) !important;
+        padding: 16px !important;
+        color: #ffffff !important;
     }
     
     .stChatMessage p {
-        color: rgba(255, 255, 255, 0.95) !important;
+        color: #ffffff !important;
+        font-size: 1rem !important;
+        line-height: 1.8 !important;
+    }
+    
+    .stChatMessage li {
+        color: #ffffff !important;
+    }
+    
+    .stChatMessage strong {
+        color: #c084fc !important;
+    }
+    
+    .stChatMessage h1, .stChatMessage h2, .stChatMessage h3 {
+        color: #ffffff !important;
+    }
+    
+    /* User message styling */
+    .stChatMessage [data-testid="stChatMessageAvatarUser"] {
+        background: linear-gradient(135deg, #818cf8, #7c3aed) !important;
+    }
+    
+    /* Assistant message styling */
+    .stChatMessage [data-testid="stChatMessageAvatarAssistant"] {
+        background: linear-gradient(135deg, #c084fc, #e879f9) !important;
     }
     
     @keyframes slideIn {
@@ -426,6 +450,29 @@ st.markdown("""
     
     .stChatInputContainer input::placeholder {
         color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    /* Answer text specific - EXTRA READABILITY */
+    .element-container p {
+        color: #ffffff !important;
+    }
+    
+    .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    .stMarkdown p {
+        color: #ffffff !important;
+        font-size: 1rem !important;
+        line-height: 1.8 !important;
+    }
+    
+    .stMarkdown li {
+        color: #ffffff !important;
+    }
+    
+    .stMarkdown strong {
+        color: #c084fc !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -772,6 +819,7 @@ if question is not None:
             answer = ask(question)
             end = time.time()
 
+            # ✅ Answer rendered with proper white text
             st.markdown(answer)
             st.caption(f"⏱️ Response Time: {round(end-start, 2)} sec")
 
