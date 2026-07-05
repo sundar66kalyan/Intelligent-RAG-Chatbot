@@ -4,8 +4,19 @@ Created by: KALYANASUNDAR-AI_Engineer
 Version: 3.0
 """
 
-import time
 import streamlit as st
+
+# -------------------------------------------------
+# Page Configuration - MUST BE FIRST STREAMLIT COMMAND
+# -------------------------------------------------
+
+st.set_page_config(
+    page_title="Intelligent RAG Chatbot",
+    page_icon="🤖",
+    layout="wide"
+)
+
+import time
 import os
 
 from rag_pipeline import ask
@@ -418,16 +429,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-# -------------------------------------------------
-# Page Configuration
-# -------------------------------------------------
-
-st.set_page_config(
-    page_title="Intelligent RAG Chatbot",
-    page_icon="🤖",
-    layout="wide"
-)
 
 # -------------------------------------------------
 # Sidebar
